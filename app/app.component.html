@@ -1,0 +1,220 @@
+<div class="container">
+
+  <br>
+
+  <div class="row">
+    <div class="col-lg-12 text-center">
+      <h1>IOTA seed Generator</h1>
+    </div>
+  </div>
+
+  <br>
+
+  <div class="row justify-content-center">
+
+    <div class="col-md-4 col-lg-4">
+      <div class="">
+        <div class="radio">
+          <label style="font-size: 1em">
+            <input type="radio" name="o5" [value]="1"  [(ngModel)]="settings.options" (change)="resetData()">
+            <span class="cr"><i class="cr-icon fa fa-circle"></i></span>
+            Seed automatisch generieren
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 col-lg-4">
+      <div class="">
+        <div class="radio">
+          <label style="font-size: 1em">
+            <input type="radio" name="o5" [value]="2"  [(ngModel)]="settings.options" (change)="resetData()">
+            <span class="cr"><i class="cr-icon fa fa-circle"></i></span>
+            Seed mit Mausbewegung generieren
+          </label>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <br>
+
+  <div class="row" *ngIf="settings.options === 1">
+    <div class="col-lg-12">
+      <div class="input-group">
+
+        <input class="form-control input-lg" type="text" [(ngModel)]="randomIOTASeed" placeholder="Dein IOTA Seed..." maxlength="81">
+
+        <div class="input-group-append">
+          <button type="button" class="btn btn-primary btn-lg fixed-btn-width" (click)="generateRandomIOTASeed()">Seed generieren</button>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="row" *ngIf="settings.options === 2">
+    <div class="col-lg-12">
+      <div class="input-group">
+
+        <input class="form-control input-lg" type="text" [(ngModel)]="randomIOTASeed" placeholder="Dein IOTA Seed..." maxlength="81">
+
+        <div class="input-group-append" *ngIf="randomIOTASeed.length < 81">
+          <button type="button" class="btn btn-primary btn-lg fixed-btn-width" (click)="generateRandomIOTASeedWithMouseMove()">Seed generieren</button>
+        </div>
+
+        <div class="input-group-append" *ngIf="randomIOTASeed.length > 80">
+          <button type="button" class="btn btn-primary btn-lg fixed-btn-width" (click)="copyRandomIOTASeed()" ngxClipboard  [cbContent]="randomIOTASeed">Seed kopieren</button>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <label>Länge:</label>
+      <span>{{randomIOTASeed.length}}</span>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="settings.options === 2">
+    <div class="col-lg-12">
+      <div class="progress" style="height: 22px;">
+        <div class="progress-bar" role="progressbar" [ngStyle]="{ 'width': currentPercentage + '%' }" aria-valuemin="0" aria-valuemax="100">
+          <span class="progress-label" *ngIf="currentPercentage > 30">{{currentPercentage}}% Complete</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <br>
+
+  <div class="row" *ngIf="settings.options === 1 && changedRandomIOTASeed.length > 0">
+
+    <div class="col-lg-12">
+      <label>Ändere nun die Buchstaben des seeds nach Deinen Vorstellungen (Bitte nur Großbuchstaben und die Zahl 9 verwenden)...</label>
+
+    </div>
+  </div>
+
+  <div class="row" *ngIf="settings.options === 1">
+    <div class="col-lg-12">
+      <div class="input-group">
+
+        <input class="form-control input-lg" type="text" [(ngModel)]="changedRandomIOTASeed" placeholder="Dein geänderter IOTA Seed..." (input)="generateChangedPositionData()" maxlength="81">
+
+        <div class="input-group-append" *ngIf="changedPositionData.length === 0 || changedRandomIOTASeed.length < 81">
+          <button type="button" class="btn btn-primary btn-lg fixed-btn-width" disabled>Seed abändern</button>
+
+        </div>
+
+        <div class="input-group-append" *ngIf="changedPositionData.length > 0 && changedRandomIOTASeed.length > 80">
+          <button type="button" class="btn btn-primary btn-lg fixed-btn-width" (click)="copyRandomIOTASeed()" ngxClipboard  [cbContent]="changedRandomIOTASeed">Seed kopieren</button>
+        </div>
+
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="row" *ngIf="settings.options === 1">
+    <div class="col-lg-12">
+      <label>Länge:</label>
+      <span>{{changedRandomIOTASeed.length}}</span>
+    </div>
+
+  </div>
+
+  <br>
+
+  <div class="row" *ngIf="randomSeedCopiedToClipboard">
+
+    <div class="col-lg-12 text-center">
+      <h4>Dein generierter seed wurde in die Zwischenablage kopiert!<span></span></h4>
+    </div>
+
+  </div>
+
+  <div class="row" *ngIf="settings.options === 1">
+
+    <div class="col-lg-12">
+      <h4>Geänderte Stellen: <span>{{changedPositionData.length}}</span></h4>
+    </div>
+
+  </div>
+
+  <div *ngIf="changedPositionData.length > 0">
+    <div class="row">
+
+      <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 text-center">
+        <h5>Position</h5>
+      </div>
+
+      <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 text-center">
+        <h5>Ursprüngliches Zeichen</h5>
+      </div>
+
+      <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 text-center">
+        <h5>Geändertes Zeichen</h5>
+      </div>
+
+    </div>
+
+    <div class="row" *ngFor="let data of changedPositionData">
+
+      <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 text-center">
+        <h5>{{data.position}}</h5>
+      </div>
+
+      <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 text-center">
+        <h5>{{data.srcChar}}</h5>
+      </div>
+
+      <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 text-center">
+        <h5>{{data.dstChar}}</h5>
+      </div>
+
+    </div>
+  </div>
+
+  <br>
+
+  <div class="row">
+    <div class="col-lg-12">
+
+      <button type="button" class="btn btn-primary btn-lg float-sm-right" (click)="readClipboard()">Zwischenablage auslesen</button>
+
+    </div>
+
+  </div>
+
+  <br>
+
+  <div class="row" *ngIf="showClipboardContent">
+
+    <div class="col-lg-12  text-center">
+      <h4>In Deiner Zwischenablage befindet sich momentan folgender Text (STRG + v drücken)</h4>
+    </div>
+
+  </div>
+
+  <div class="row">
+
+    <div class="col-lg-12 text-center">
+      <h5 id="clipboard-text"></h5>
+
+    </div>
+
+  </div>
+
+</div>
